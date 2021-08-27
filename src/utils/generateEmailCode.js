@@ -1,0 +1,14 @@
+const characters =
+  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+const genCode = () => {
+  let token = "";
+  for (let i = 0; i < 25; i++) {
+    token += characters[Math.floor(Math.random() * characters.length)];
+  }
+  return token;
+};
+
+console.log(genCode());
+
+module.exports = {genCode}
