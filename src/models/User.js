@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
-const database = require("../database/dbConfig");
+const database = require("../config/dbConfig")
+
 
 const User = database.define(
   "User",
@@ -19,15 +20,14 @@ const User = database.define(
       allowNull: false,
     },
 
-    // for the email verification
     active: {
-      type: DataTypes.TEXT(),
+      type: DataTypes.BOOLEAN(),
+      defaultValue: false,
       allowNull: false,
-      default: false,
     },
 
     confirmationCode: {
-      type: DataTypes.TEXT(),
+      type: DataTypes.STRING(),
       allowNull: false,
     },
   },

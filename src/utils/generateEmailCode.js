@@ -9,6 +9,5 @@ const genCode = () => {
   return token;
 };
 
-console.log(genCode());
 
-module.exports = {genCode}
+module.exports = { genCode }
