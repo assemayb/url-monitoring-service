@@ -31,7 +31,7 @@ sequelize
 
 // API routes
 app.use("/auth", require("./endpoints/auth"))
-// app.use("/checks", require("./endpoints/checks"))
+app.use("/checks", require("./endpoints/checks"))
 
 
 const PORT = process.env.PORT || 8000;
