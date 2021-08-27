@@ -31,7 +31,7 @@ router.post("/sign-up", async (req, res) => {
       confirmationCode: mailCode,
     });
 
-    console.log(user);
+    // TODO: send the code to the email here 
     return res.status(200).json({
       message: "please check your email to complete the registration process",
     });
@@ -40,6 +40,27 @@ router.post("/sign-up", async (req, res) => {
   }
 });
 
+
+// verify user email
+router.post("/verify-email", async (req, res) => {
+  const {email, password, code} = req.body  
+
+  try {
+    let user = await User.findOne({
+      where: {
+        email: email
+
+      }
+    })
+
+    const StoredConfirmationCode = user.getDataValue("confirmationCode")
+    if(code === StoredConfirmationCode) {
+
+    }
+  } catch (error) {
+    
+  }
+})
 
 router.post("/login", async (req, res) => {
   const {password, email} = req.body
