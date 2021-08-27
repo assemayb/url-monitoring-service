@@ -1,7 +1,12 @@
-const nodeMailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
+
+console.log("================>");
+console.log(email, password);
+console.log("================>");
+
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -11,18 +16,13 @@ const transport = nodemailer.createTransport({
   },
 });
 
-const createEmailContent = (
-  senderMail,
-  receiverMail,
-  receiverName,
-  conformationCode
-) => {
+const sendConfirmationEmail  = (receiverMail, conformationCode) => {
   try {
     transport.sendMail({
-      from: senderMail,
+      from: email,
       to: receiverMail,
       subject: "Please confirm your account",
-      html: `<div>
+      html: `
              <h1>Email Confirmation</h1>
             <h1>your confimation code is: ${conformationCode}</h1>
             </div>`,
@@ -31,3 +31,5 @@ const createEmailContent = (
     console.log(err.message);
   }
 };
+
+module.exports = { sendConfirmationEmail  };

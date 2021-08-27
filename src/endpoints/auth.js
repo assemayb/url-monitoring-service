@@ -5,21 +5,20 @@ const { verify } = require("jsonwebtoken");
 const { genCode } = require("../utils/generateEmailCode");
 const { User } = require("../models/User");
 
+const nodemailer = require("nodemailer");
+const { sendConfirmationEmail } = require("../utils/verifyEmail");
+
 const router = express.Router();
 
 router.post("/sign-up", async (req, res) => {
-  if (!req.body) {
-    return res
-      .status(400)
-      .json({ message: "required data has not been provided" });
-  }
+  if (!req.body)
+    return res.status(400).json({ message: "required data  not provided" });
 
   const { password, email } = req.body;
   const isDataFine = password !== "" && email !== "";
 
   if (isDataFine) {
     const mailCode = genCode();
-    console.log("Mail Code", mailCode);
 
     const hashedPassword = await bcrypt.hash(password, 10);
     let user = await User.create({
@@ -28,12 +27,13 @@ router.post("/sign-up", async (req, res) => {
       confirmationCode: mailCode,
     });
 
-    // TODO: send the code to the email here
-    return res.status(200).json({
-      message: "please check your email to complete the registration process",
-    });
+    // console.log(user.get());
 
-    // add to data
+    sendConfirmationEmail(email, mailCode);
+
+    return res
+      .status(200)
+      .json({ message: "check your email to complete registration process" });
   }
 });
 
@@ -47,7 +47,10 @@ router.post("/verify-email", async (req, res) => {
     const userStoredPassword = user.getDataValue("password");
     const storedConfirmationCode = user.getDataValue("confirmationCode");
 
-    const isPasswordCorrect = await bcrypt.compare( password, userStoredPassword );
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      userStoredPassword
+    );
 
     const isCodeCorrect = code === storedConfirmationCode;
 
@@ -64,19 +67,17 @@ router.post("/verify-email", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { password, email } = req.body;
-  let user = await User.findOne({ where: { email: email }});
+  let user = await User.findOne({ where: { email: email } });
 
   const status = user.getDataValue("active");
-  const storedPassword = user.getDataValue("password")
+  const storedPassword = user.getDataValue("password");
 
-  
   if (status === false) {
     return res.status(401).send({
       message: "Pending Account. Please Verify Your Email!",
     });
   } else {
-    const isPassCorrect = bcrypt.compare(password, storedPassword)
-    
+    const isPassCorrect = bcrypt.compare(password, storedPassword);
   }
 });
 
