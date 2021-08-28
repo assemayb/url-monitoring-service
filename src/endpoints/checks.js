@@ -12,4 +12,36 @@ router.post("/create", checkAuth , async (req, res) => {
   }
 });
 
+
+// edit a current check operation
+router.put("/edit/:checkId", checkAuth, (req, res) => {
+  const id = req.params.checkId
+  try {
+    res.status(200).json({message: id})
+  } catch (error) {
+    console.log(error.message);
+  }
+})
+
+
+// Pause a check operation
+router.put("/pause/:checkId", checkAuth, (req, res) => {
+  const id = req.params.checkId
+  try {
+    res.status(200).json({message: id})
+  } catch (error) {
+    console.log(error.message);
+  }
+})
+
+
+router.delete("/:checkId", (req, res) => {
+  const id = req.params.checkId
+  try {
+    res.status(200).json({message: id})
+  } catch (error) {
+    console.log(error.message);
+  }
+})
+
 module.exports = router;

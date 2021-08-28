@@ -3,17 +3,16 @@ const cors = require("cors")
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser")
 const sequelize  = require("./config/dbConfig")
+
+
 const { config } = require("dotenv");
-
-
 config({
     path: `${__dirname}/config/.env`,
 });
 
+
+
 app = express()
-
-
-
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(cors())
@@ -32,6 +31,7 @@ sequelize
 // API routes
 app.use("/auth", require("./endpoints/auth"))
 app.use("/checks", require("./endpoints/checks"))
+app.use("/play", require("./endpoints/play"))
 
 
 const PORT = process.env.PORT || 8000;
