@@ -1,4 +1,4 @@
-const { sign } =  require("jsonwebtoken");
+const {sign } =  require("jsonwebtoken");
 
 const createAccessToken = (userId, userEmail) => {
   return sign(

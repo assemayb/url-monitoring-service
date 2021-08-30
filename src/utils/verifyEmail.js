@@ -3,9 +3,6 @@ const nodemailer = require("nodemailer");
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
 
-console.log(email);
-console.log(password);
-
 const transport = nodemailer.createTransport({
   service: "Gmail",
   auth: {
@@ -35,7 +32,7 @@ const sendAvialabilityCheck  = (checkData) => {
   const {name , username, url, isFine } = checkData
   
   const status = isFine == true ? "up" : "down"
-  console.log(username);
+  
   try {
     transport.sendMail({
       from: email,
