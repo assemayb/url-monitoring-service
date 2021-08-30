@@ -1,6 +1,6 @@
 const checkNeededData = (req, res, next) => {
   let isFine = true;
-  const needKeys = ["name", "url", "protocol"];
+  const needKeys = ["name", "url", "protocol", "tag", "webhook"];
   for (let key of needKeys) {
     if (!Object.keys(req.body).includes(key)) {
       isFine = false;
