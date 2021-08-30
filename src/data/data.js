@@ -1,6 +1,6 @@
 // mock data
 
-export const dummieUsers = [
+const dummieUsers = [
   {
     username: "assem",
     email: "assem@gmail.com",
@@ -21,3 +21,30 @@ export const dummieUsers = [
     active: false,
   },
 ];
+
+
+const checks = [
+  {
+    id: 1,
+    url: "https://www.assemsaad.tech",
+    protocol: "https",
+    name: "site-check",
+    webhook: "dasdasd",
+  },
+  {
+    id: 2,
+    url: "https://www.assemsaad.tech",
+    protocol: "https",
+    name: "site-check",
+    webhook: "dasdasd",
+  },
+  {
+    id: 3,
+    url: "https://www.assemsaad.tech",
+    protocol: "https",
+    name: "site-check",
+    webhook: "dasdasd",
+  },
+];
+
+module.exports = checks

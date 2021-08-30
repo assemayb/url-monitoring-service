@@ -1,6 +1,10 @@
-const isUrlAvialable = async (req, res) => {
+const axios  = require("axios")
+
+
+// const isUrlAvialable = async (req, res) => {
+const isUrlAvialable = async (url, path, host) => {
   try {
-    const { url, path, host } = req.body;
+    // const { url, path, host } = req.body;
     let fullUrl = path !== "" ? `${url}/${path}` : url;
     const request = await axios.get(fullUrl);
     const status = await request.status;

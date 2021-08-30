@@ -7,6 +7,7 @@ const Check = database.define("Check", {
     primaryKey: true,
     autoIncrement: true,
   },
+
   name: {
     type: DataTypes.STRING(),
     allowNull: false,
@@ -16,10 +17,12 @@ const Check = database.define("Check", {
     type: DataTypes.STRING(),
     allowNull: false,
   },
+
   protocol: {
     type: DataTypes.STRING(),
     allowNull: false,
   },
+  
   path: {
     type: DataTypes.STRING(),
     allowNull: true,
@@ -31,24 +34,7 @@ const Check = database.define("Check", {
     allowNull: false,
   },
 
-  timeout: {
-    type: DataTypes.INTEGER(),
-    allowNull: false,
-    defaultValue: 5000 /** in ms */,
-  },
-
-  interval: {
-    type: DataTypes.BIGINT(),
-    allowNull: false,
-    defaultValue: 1000 * 60 * 10 /** 10 mins */,
-  },
-
   username: {
-    type: DataTypes.STRING(),
-    allowNull: false,
-  },
-
-  password: {
     type: DataTypes.STRING(),
     allowNull: false,
   },

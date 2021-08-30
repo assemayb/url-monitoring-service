@@ -1,57 +1,81 @@
 const express = require("express");
 const axios = require("axios");
 const checkAuth = require("../utils/checkAuth");
+const isUrlAvialable = require("../utils/checkAvailability");
+const { Check } = require("../models/Check");
 
 const router = express.Router();
 
-router.get(
-  "/up-or-down",
-  /**checkAuth */ async (req, res) => {
-    try {
-      const { url, path, host } = req.body;
-      let fullUrl = path !== "" ? `${url}/${path}` : url;
-      const request = await axios.get(fullUrl);
-      const status = await request.status;
-      if (status === 200)
-        return res.status(200).json({ message: "url is up and running" });
-      return res.status(204).json({ message: "url is down or not working!" });
-    } catch (error) {
-      console.log(error.message);
-      // return res.status(500).json({ message: error.message });
-    }
+const TIMEOUT = 5000; /** 5 seconds */
+const INTERVAL = 60 * 10000; /** 10 minutes */
+const THRESHOLD = 1; /** threshold of failures */
+
+// TODO: make this a separate function
+// TODO: /**checkAuth */ add this as a middleware
+router.get("/up-or-down", async (req, res) => {
+  try {
+    const value = isUrlAvialable(req, res);
+    if (value === true)
+      return res.status(200).json({ message: "url is up and running" });
+    return res.status(204).json({ message: "url is down or not working!" });
+  } catch (error) {
+    console.log(error.message);
+    // return res.status(500).json({ message: error.message });
   }
-);
+});
 
 router.post("/create", checkAuth, async (req, res) => {
   try {
-    const { url, path, host } = req.body;
-    res.status(200).json({ message: { url, path, host } });
+    const { name, url, protocol, path, host, webhook, tag } = req.body;
+
+    // neeed data: name - url protocol
+    const requestUsername = req.userData.email;
+    let check = await Check.create({
+      name,
+      url,
+      protocol,
+      webhook,
+      tag,
+      username: requestUsername,
+      path,
+      host,
+    });
+
+    // console.log(check.get());
+
+    res.status(201).json({ message: "check is Added." });
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
 // edit a current check operation
-router.put("/edit/:checkId", checkAuth, (req, res) => {
+router.put("/:checkId", checkAuth, (req, res) => {
   const id = req.params.checkId;
   try {
     res.status(200).json({ message: id });
   } catch (error) {
     console.log(error.message);
+  }
+});
+
+// delete a check from stored ones
+router.delete("/:checkId", checkAuth, async (req, res) => {
+  const id = req.params.checkId;
+  await Check.destroy({
+    where: id,
+  });
+  try {
+    res.status(204).json({ message: "check deleted." });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
 // Pause a check operation
 router.put("/pause/:checkId", checkAuth, (req, res) => {
-  const id = req.params.checkId;
-  try {
-    res.status(200).json({ message: id });
-  } catch (error) {
-    console.log(error.message);
-  }
-});
-
-router.delete("/:checkId", (req, res) => {
   const id = req.params.checkId;
   try {
     res.status(200).json({ message: id });
