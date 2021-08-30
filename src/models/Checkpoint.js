@@ -2,8 +2,8 @@ const { DataTypes } = require("sequelize");
 const database = require("../config/dbConfig");
 const { Check } = require("./Check");
 
-const Report = database.define(
-  "Report",
+const CheckPoint = database.define(
+  "CheckPoint",
   {
     id: {
       type: DataTypes.INTEGER(),
@@ -12,6 +12,10 @@ const Report = database.define(
     },
     currentStatus: {
       type: DataTypes.STRING(),
+      allowNull: false,
+    },
+    responseTime: {
+      type: DataTypes.FLOAT(),
       allowNull: false,
     },
     availability: {
@@ -28,19 +32,19 @@ const Report = database.define(
       type: DataTypes.INTEGER(),
       allowNull: false,
     },
+
     // avg response time
     responseTime: {
       type: DataTypes.FLOAT(),
       allowNull: false,
     },
-    history: {},
   },
   {
-    tableName: "reports",
+    tableName: "checkpoints",
   }
 );
 
-Report.belongsTo(Check, {
+CheckPoint.belongsTo(Check, {
   as: "checkId",
 });
 

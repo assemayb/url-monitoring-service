@@ -5,14 +5,24 @@ const TIMEOUT = 5000; /** 5 seconds */
 const INTERVAL = 60 * 10000; /** 10 minutes */
 const THRESHOLD = 1; /** threshold of failures */
 
+const notificateUser = async (checkData) => {
+  await sendAvialabilityCheck(checkData);
+  await notifyWebhookURL(checkData);
+};
+
 async function pollChecks() {
-  const checks = await Check.findAll();
-  checks.forEach((website, idx) => {
-    website = website.get();
+  // get all added checks and iterate throgh them
+  const checks = await Check.findAll({
+    include: "reports",
+  });
+
+  checks.forEach((check, idx) => {
+    let website = check.get();
+
+    // create the polling instance to the check
     let monitor = new Ping({
       website: website.url,
-      interval: 0.1,
-
+      interval: 0.6,
       config: {
         intervalUnits: "minutes",
         generateId: false,
@@ -24,12 +34,14 @@ async function pollChecks() {
     });
 
     monitor.on("up", (res) => {
+      console.log(Object.keys(res));
       console.log(res.website + " is up and working fine");
     });
 
     monitor.on("down", (res) => {
       // TODO: add the email and notification
-      console.log(res);
+      // console.log(res);
+      console.log(website, " is down ==========>");
     });
 
     monitor.on("error", (res) => {

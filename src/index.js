@@ -29,11 +29,10 @@ sequelize
   // .then(databaseConfig.sync( { force: true }  ))
   .catch((err) => console.log(err));
 
-
-
+  
 app.use("/auth", require("./endpoints/auth"));
 app.use("/checks", require("./endpoints/checks"));
-app.use("/play", require("./endpoints/play"));
+
 
 
 
