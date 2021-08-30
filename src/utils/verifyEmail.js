@@ -3,6 +3,8 @@ const nodemailer = require("nodemailer");
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
 
+console.log(email);
+console.log(password);
 
 const transport = nodemailer.createTransport({
   service: "Gmail",
@@ -28,4 +30,22 @@ const sendConfirmationEmail  = (receiverMail, conformationCode) => {
   }
 };
 
-module.exports = { sendConfirmationEmail  };
+
+const sendAvialabilityCheck  = (checkData) => {
+  const {name , username, url, isFine } = checkData
+  
+  const status = isFine == true ? "up" : "down"
+  console.log(username);
+  try {
+    transport.sendMail({
+      from: email,
+      to: username,
+      subject: "site check",
+      html: `the url ${url} is currently ${status} </div>`,
+    });
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+module.exports = { sendConfirmationEmail, sendAvialabilityCheck  };

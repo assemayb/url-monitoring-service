@@ -4,23 +4,35 @@ const checkAuth = require("../utils/checkAuth");
 const isUrlAvialable = require("../utils/checkAvailability");
 const { Check } = require("../models/Check");
 
+const { sendAvialabilityCheck } = require("../utils/verifyEmail");
+const notifyWebhookURL = require("../utils/notifyWebhook");
+
 const router = express.Router();
 
 const TIMEOUT = 5000; /** 5 seconds */
 const INTERVAL = 60 * 10000; /** 10 minutes */
 const THRESHOLD = 1; /** threshold of failures */
 
-// TODO: make this a separate function
-// TODO: /**checkAuth */ add this as a middleware
-router.get("/up-or-down", async (req, res) => {
+router.get("/up-or-down", checkAuth, async (req, res) => {
   try {
-    const value = isUrlAvialable(req, res);
-    if (value === true)
+    const { name, url, path } = req.body;
+
+    const storedCheck = await Check.findOne({ where: { name, url } });
+    const checkData = storedCheck.get();
+    const value = await isUrlAvialable(url, path);
+    checkData.isFine = value;
+
+    sendAvialabilityCheck(checkData);
+    notifyWebhookURL(checkData);
+    
+    if (value == true) {
       return res.status(200).json({ message: "url is up and running" });
-    return res.status(204).json({ message: "url is down or not working!" });
+    } else {
+      return res.status(204).json({ message: "url is down or not working!" });
+    }
   } catch (error) {
     console.log(error.message);
-    // return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 
@@ -84,4 +96,16 @@ router.put("/pause/:checkId", checkAuth, (req, res) => {
   }
 });
 
+router.get("/all-checks", async (req, res) => {
+  try {
+    let checks = await Check.findAll();
+    return res.status(200).json({
+      checks,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 module.exports = router;

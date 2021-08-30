@@ -34,5 +34,11 @@ app.use("/checks", require("./endpoints/checks"))
 app.use("/play", require("./endpoints/play"))
 
 
+
+
+
+
+
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, console.log(`server is running on port ${PORT}`));
