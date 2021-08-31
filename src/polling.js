@@ -1,13 +1,17 @@
 const Ping = require("ping-monitor");
 const { Check } = require("./models/Check");
 const { CheckPoint } = require("./models/Checkpoint");
+const notifyWebhookURL = require("./utils/notifyWebhook");
+const { sendAvialabilityCheck } = require("./utils/verifyEmail");
+
+
 
 const TIMEOUT = 5000; /** 5 seconds */
 const INTERVAL = 60 * 10000; /** 10 minutes */
 const THRESHOLD = 1; /** threshold of failures */
 
 const notificateUser = async (checkData) => {
-  await sendAvialabilityCheck(checkData);
+  sendAvialabilityCheck(checkData);
   await notifyWebhookURL(checkData);
 };
 
@@ -25,7 +29,8 @@ async function pollChecks() {
     // create the polling instance to the check
     let monitor = new Ping({
       website: website.url,
-      interval: 0.6,
+      // interval: 0.5, /** IN MINUTES */
+      interval: 5, /** IN MINUTES */
       config: {
         intervalUnits: "minutes",
         generateId: false,
@@ -57,7 +62,7 @@ async function pollChecks() {
           let isFine = statusCode == 200 ? true : false;
           let chekData = website;
           checkData.isFine = isFine;
-          notificateUser(chekData);
+          await notificateUser(chekData);
         }
 
         const uptime = () => {
@@ -78,10 +83,8 @@ async function pollChecks() {
       }
     });
 
-    monitor.on("down", (res) => {
-      // TODO: add the email and notification
-      // let checkPoint = await Checkpoint.create({
-      // })
+    monitor.on("down", async (res) => {
+      const { time, statusCode, statusMessage, responseTime } = res;
       let allCheckPoints = await CheckPoint.findAll({
         where: { checkId: check.id },
       });
@@ -96,9 +99,9 @@ async function pollChecks() {
 
       if (lastCheckStatus != statusMessage) {
         let isFine = statusCode == 200 ? true : false;
-        let chekData = website;
+        let checkData = website;
         checkData.isFine = isFine;
-        notificateUser(chekData);
+        await notificateUser(checkData);
       }
 
       const downtime = () => {
@@ -108,7 +111,7 @@ async function pollChecks() {
           return null;
         }
       };
-      let newCheckPoint = await CheckPoint.create({
+      await CheckPoint.create({
         checkId: check.id,
         currentStatus: statusMessage,
         responseTime: responseTime,
@@ -125,7 +128,6 @@ async function pollChecks() {
     });
 
     monitor.on("stop", (website) => {
-      // TODO: add the email and notification
       console.log(website + " monitor has stopped.");
     });
   });

@@ -6,34 +6,9 @@ const { Check } = require("../models/Check");
 
 const { sendAvialabilityCheck } = require("../utils/verifyEmail");
 const notifyWebhookURL = require("../utils/notifyWebhook");
+const { generateByID, generateByTag } = require("../utils/generateReport");
 
 const router = express.Router();
-
-
-// TODO: create the report gen endpoints here
-// TODO: put the main function in the utils file 
-
-
-router.get("/", checkAuth, (req, res) => {
-    const {name, url} = req.body
-    try {
-        
-    } catch (error) {
-        
-    }
-})
-
-
-router.get("/:tagName", checkAuth, (req, res) => {
-    // TODO: get checks with the same tag and gen the report
-    try {
-        
-    } catch (error) {
-        
-    }
-})
-
-
 
 // status - The current status of the URL.
 // availability - A percentage of the URL availability.
@@ -43,5 +18,28 @@ router.get("/:tagName", checkAuth, (req, res) => {
 // responseTime - The average response time for the URL.
 // history - Timestamped logs of the polling requests.
 
+router.get("/tag/:tag", /** checkAuth */ async (req, res) => {
+  const tagName = req.params.tag;
 
-module.exports = router
+  try {
+    let result = await generateByTag(tagName);
+    console.log(result);
+    return res.status(200).json({ message: " ===>>>  ok" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+router.get("/:checkId", /** checkAuth */ async (req, res) => {
+  const checkId = req.params.checkId;
+
+  try {
+    let result = await generateByID(checkId);
+    // console.log(result);
+    return res.status(200).json({ message: " ===>>>  ok" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+module.exports = router;
