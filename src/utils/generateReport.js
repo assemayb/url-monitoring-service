@@ -28,7 +28,7 @@ const getAvailability = (checkPoints) => {
     uptime = handleNullValue(uptime);
     result += uptime;
   });
-  return result;
+  return `${result} times`;
 };
 
 const getOutages = (checkPoints) => {
@@ -38,7 +38,8 @@ const getOutages = (checkPoints) => {
     uptime = handleNullValue(downtime);
     result += downtime;
   });
-  return result;
+
+  return `${result} times`;
 };
 const generateByID = async (checkId) => {
   try {
@@ -47,7 +48,6 @@ const generateByID = async (checkId) => {
         checkId,
       },
     });
-
     const checkPointsCount = checkPoints.count;
     checkPoints = checkPoints.rows.map((ch, idx) => ch.toJSON());
     let responseTime = Math.round(
@@ -72,20 +72,17 @@ const generateByID = async (checkId) => {
 };
 
 const generateByTag = async (tagName) => {
-  let allData = [];
+  let allChecks = [];
   try {
     let checks = await Check.findAll({
       where: { tag: tagName },
     });
-    checks.forEach(async (ch, idx) => {
-      let checkPoints = await CheckPoint.findAndCountAll({
-        where: { checkId: ch.id },
-      });
-      checkPoints = checkPoints.rows.map((ch) => ch.toJSON());
-      allData.push(checkPoints);
-    });
-    console.log(allData);
-    return allData;
+    for (let ch of checks) {
+      const singleCheck = await generateByID(ch.id);
+      singleCheck.name = ch.name
+      allChecks.push(singleCheck);
+    }
+    return allChecks;
   } catch (error) {
     console.log(error.message);
     throw new Error(error);
