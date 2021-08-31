@@ -24,7 +24,7 @@ router.get("/up-or-down", checkAuth, async (req, res) => {
 
     sendAvialabilityCheck(checkData);
     notifyWebhookURL(checkData);
-    
+
     if (value == true) {
       return res.status(200).json({ message: "url is up and running" });
     } else {
@@ -63,12 +63,17 @@ router.post("/create", checkAuth, async (req, res) => {
 });
 
 // edit a current check operation
-router.put("/:checkId", checkAuth, (req, res) => {
+router.put("/:checkId", checkAuth, async (req, res) => {
   const id = req.params.checkId;
+  const checkNewData = req.body;
+  const check = await Check.findByPk(id);
+  check.update(checkNewData);
+
   try {
-    res.status(200).json({ message: id });
+    res.status(200).json({ message: "check is updated successfully." });
   } catch (error) {
     console.log(error.message);
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -96,6 +101,8 @@ router.put("/pause/:checkId", checkAuth, (req, res) => {
   }
 });
 
+
+/// FOR TESTING PURPOSES
 router.get("/all-checks", async (req, res) => {
   try {
     let checks = await Check.findAll();
