@@ -92,7 +92,7 @@ router.delete("/:checkId", checkAuth, async (req, res) => {
 });
 
 // Pause a check operation
-router.put("/pause/:checkId", checkAuth, (req, res) => {
+router.put("/pause/:checkId", checkAuth, async (req, res) => {
   const id = req.params.checkId;
   const check = await Check.findByPk(id);
   await check.update({
@@ -110,6 +110,7 @@ router.put("/pause/:checkId", checkAuth, (req, res) => {
 router.get("/all-checks", async (req, res) => {
   try {
     let checks = await Check.findAll();
+  
     return res.status(200).json({
       checks,
     });

@@ -10,30 +10,27 @@ const CheckPoint = database.define(
       primaryKey: true,
       autoIncrement: true,
     },
+
+    // available or not
     currentStatus: {
-      type: DataTypes.STRING(),
+      type: DataTypes.STRING(), 
       allowNull: false,
     },
     responseTime: {
       type: DataTypes.FLOAT(),
       allowNull: false,
     },
-    availability: {
-      type: DataTypes.FLOAT(),
-      allowNull: false,
-    },
     // down and up times are in seconds
     uptime: {
       type: DataTypes.INTEGER(),
-      allowNull: false,
+      allowNull: true,
     },
 
     downtime: {
       type: DataTypes.INTEGER(),
-      allowNull: false,
+      allowNull: true,
     },
 
-    // avg response time
     responseTime: {
       type: DataTypes.FLOAT(),
       allowNull: false,
@@ -46,9 +43,9 @@ const CheckPoint = database.define(
 
 // each check has many checkpoints
 CheckPoint.belongsTo(Check, {
-  as: "checkId",
+  as: "check",
 });
 
 module.exports = {
-  Report,
+  CheckPoint,
 };

@@ -1,5 +1,7 @@
 const nodemailer = require("nodemailer");
 
+
+// user credentials from the .env file
 const email = process.env.EMAIL;
 const password = process.env.PASSWORD;
 
