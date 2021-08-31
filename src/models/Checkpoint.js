@@ -44,6 +44,7 @@ const CheckPoint = database.define(
   }
 );
 
+// each check has many checkpoints
 CheckPoint.belongsTo(Check, {
   as: "checkId",
 });
