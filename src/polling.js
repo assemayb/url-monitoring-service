@@ -13,7 +13,10 @@ const notificateUser = async (checkData) => {
 async function pollChecks() {
   // get all added checks and iterate throgh them
   const checks = await Check.findAll({
-    include: "reports",
+    // include: "reports",
+    where: {
+      active: true,
+    },
   });
 
   checks.forEach((check, idx) => {

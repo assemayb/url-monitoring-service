@@ -94,13 +94,17 @@ router.delete("/:checkId", checkAuth, async (req, res) => {
 // Pause a check operation
 router.put("/pause/:checkId", checkAuth, (req, res) => {
   const id = req.params.checkId;
+  const check = await Check.findByPk(id);
+  await check.update({
+    active: false,
+  });
   try {
-    res.status(200).json({ message: id });
+    return res.status(200).json({ message: id });
   } catch (error) {
     console.log(error.message);
+    return res.status(500).json({ message: error.message });
   }
 });
-
 
 /// FOR TESTING PURPOSES
 router.get("/all-checks", async (req, res) => {

@@ -26,23 +26,16 @@ sequelize
   .authenticate()
   .then(console.log("database connected successfulyy"))
   .then(sequelize.sync(/**{ force: true } */))
-  // .then(databaseConfig.sync( { force: true }  ))
+  // .then(sequelize.sync( { force: true }  ))
   .catch((err) => console.log(err));
 
-  
 app.use("/auth", require("./endpoints/auth"));
 app.use("/checks", require("./endpoints/checks"));
-
-
-
 
 const runPolling = async () => {
   await pollChecks();
 };
 runPolling();
-
-
-
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, console.log(`server is running on port ${PORT}`));

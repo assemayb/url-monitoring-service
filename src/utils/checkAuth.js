@@ -1,4 +1,3 @@
-// after will not be used in the user login/signup process
 
 const { verify } = require("jsonwebtoken");
 const { User } = require("../models/User");
@@ -20,7 +19,7 @@ const checkAuth = async (req, res, next) => {
       },
     });
     if (user !== null) {
-      req.userData = { id, email };
+      req.userData = { id,email };
       return next();
     }
   } catch (error) {
